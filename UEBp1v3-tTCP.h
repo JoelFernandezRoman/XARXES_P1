@@ -31,3 +31,4 @@ int TCP_HaArribatAlgunaCosaEnTemps(const int *LlistaSck, int LongLlistaSck, int 
 char* TCP_ObteMissError(void);
 
 /* int TCP_FuncioExterna(arg1, arg2...);                                  */
+

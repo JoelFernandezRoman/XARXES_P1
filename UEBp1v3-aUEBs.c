@@ -50,7 +50,10 @@ int RepiDesconstMis(int SckCon, char *tipus, char *info1, int *long1);
 /* -1 si hi ha un error en la interfície de sockets.                      */
 int UEBs_IniciaServ(int *SckEsc, int portTCPser)
 {
-	
+	if((*SckEsc = TCP_CreaSockServidor("0.0.0.0",portTCPser))== -1){
+		return -1;
+	}
+    return 0;
 }
 
 /* A través del socket d'escolta TCP d'identificador "SckEsc", rep una    */

@@ -1,9 +1,11 @@
 /**************************************************************************/
 /*                                                                        */
 /* P1 - UEB amb sockets TCP/IP - Part I                                   */
-/* Fitxer ser.c que implementa el servidor de UEB sobre la capa de        */
-/* transport TCP (fent crides a la "nova" interfície de la capa de        */
-/* transport o "nova" interfície de sockets).                             */
+/* Fitxer ser.c que implementa la interfície aplicació-administrador      */
+/* d'un servidor de l'aplicació de UEB, sobre la capa d'aplicació de      */
+/* (la part servidora de) UEB (fent crides a la interfície de la part     */
+/* servidora de la capa UEB).                                             */
+
 /*                                                                        */
 /* Autors:                                                                */
 /* Data:                                                                  */
@@ -12,7 +14,7 @@
 
 /* Inclusió de llibreries, p.e. #include <stdio.h> o #include "meu.h"     */
 
-#include "UEBp1v2-tTCP.h"
+#include "UEBp1v3-aUEBs.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -29,60 +31,45 @@
 int main(int argc,char *argv[])
 {
  /* Declaració de variables, p.e., int n;                                 */
-    int sesc, scon, i;
-    int portloc, portrem;
+    int sesc;
+    int portloc;
     char iprem[16];
-    char iploc[16];
     int bytes_llegits, bytes_escrits;
     char buffer[200];
+    struct dades {
+		char *ip;
+		int port;
+		char *nomFitxer;
+	};
+	struct dades client, servidor;
  /* Expressions, estructures de control, crides a funcions, etc.          */
-    printf("#Port (servidor):");
-    scanf("%d", &portloc);
-    sesc=TCP_CreaSockServidor("0.0.0.0",portloc);  
-    if((scon=TCP_AcceptaConnexio(sesc,iprem,&portrem))==-1)
-	 {
-	   perror("Error en accept");
+    FILE * f = fopen("ser.cfg","r");
+	if(fopen == NULL){
+		perror("Fitxer de configuracio no trobat");
+		exit(-1);
+	}
+    fscanf(f,"%s %d",buffer,&portloc);	
+	if((UEBs_IniciaServ(&sesc,portloc)) == -1){
+	   perror("Error en inicia servidor");
 	   close(sesc);
 	   exit(-1);
     }
-    printf("Socket remot : @IP: %s, #Port: %d \n",iprem,portrem);
-    printf("Socket local : @IP: %s, #Port: %d \n",iploc,portloc);
-    
-    if((TCP_TrobaAdrSockLoc(scon,iploc,&portloc)) == -1){
-        perror("Error en getsockname");
-		  close(scon);
-		  exit(-1);
-	 }
-    if((TCP_TrobaAdrSockRem(scon,iprem,&portrem)) == -1){
-        perror("Error en getpeername");
-		  close(scon);
-		  exit(-1);
+    printf("S'ha iniciat servidor amb #Port: %d\n",portloc);
+    while(){
+	  int res = UEBs_ServeixPeticio(sesc);
+	  if(res == -1){
+	    perror("Resposta erronia");
+	    exit(-1);
+	  }
+	  else if(res == -2){
+	    perror("Error en la interfície de sockets");
+	    exit(-1);
+	  }
+	  else if(res == -3){
+	    perror("Client ha tancat la connexio");
+	    exit(-1);
+	  } 
     }
-    printf("Socket remot : @IP: %s, #Port: %d \n",iprem,portrem);
-    printf("Socket local : @IP: %s, #Port: %d \n",iploc,portloc);
-    do{
-		if((bytes_llegits=TCP_Rep(scon,buffer,sizeof(buffer)))==-1)
-		{
-		 perror("Error en read");
-		 close(scon);
-		 exit(-1);
-		}
-		printf("Bytes rebuts %d\n", bytes_llegits);
-		if((bytes_escrits=write(1,buffer,bytes_llegits))==-1)
-		{
-		 perror("Error en write");
-		 close(scon);
-		 exit(-1);
-		}
-    } while(buffer[0] != '\n');
-    if(TCP_TancaSock(scon)==-1){
-      exit(-1);
-    }if(TCP_TancaSock(sesc)==-1){
-      exit(-1);
-    }
-	
-	
-
 }
 
 /* Definició de funcions INTERNES, és a dir, d'aquelles que es faran      */
@@ -94,3 +81,4 @@ int main(int argc,char *argv[])
 {
 	
 } */
+
