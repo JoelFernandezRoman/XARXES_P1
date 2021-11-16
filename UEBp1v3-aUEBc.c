@@ -15,6 +15,9 @@
 /*   un #include del propi fitxer capçalera)                              */
 
 #include "UEBp1v3-tTCP.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* Definició de constants, p.e.,                                          */
 
@@ -59,7 +62,19 @@ int RepiDesconstMis(int SckCon, char *tipus, char *info1, int *long1);
 /* -3 si l'altra part tanca la connexió.                                  */
 int UEBc_ObteFitxer(const char *IPser, int portTCPser, const char *NomFitx, char *Resp, int *LongResp)
 {
-	
+	 int scon, bytes_escrits;
+	 if((scon=TCP_CreaSockClient("0.0.0.0",0))==-1)
+	 {
+	   perror("Error en socket");
+	   exit(-1);
+	 }
+	 if(TCP_DemanaConnexio(scon,IPser,portTCPser) == -1){
+		  perror("Error en connect");
+		  close(scon);
+		  exit(-1);
+     }
+     ConstiEnvMis(scon,"OBT",NomFitx,strlen(NomFitx));
+	 return 0;
 }
 
 /* Examina simultàniament i sense límit de temps (una espera indefinida)  */
@@ -111,6 +126,8 @@ char* UEBc_ObteMissError(void)
 	
 } */
 
+    	
+
 /* "Construeix" un missatge de PUEB a partir dels seus camps tipus,       */
 /* long1 i info1, escrits, respectivament a "tipus", "long1" i "info1"    */
 /* (que té una longitud de "long1" bytes), i l'envia a través del         */
@@ -126,7 +143,21 @@ char* UEBc_ObteMissError(void)
 /* -2 si protocol és incorrecte (tipus de petició, mal construït, etc.)   */
 int ConstiEnvMis(int SckCon, const char *tipus, const char *info1, int long1)
 {
-	
+  int bytes_escrits;	
+  char * missatge = malloc(7+long1+1);
+  memcpy(missatge,tipus,3);
+  char n[4];
+  sprintf(n, "%.4d", long1);
+  memcpy(missatge+3,n,4);
+  memcpy(missatge+7,info1,long1);
+  missatge[7+long1] = '\0';
+  printf("%s\n",missatge);
+  if((bytes_escrits=TCP_Envia(SckCon,missatge,strlen(missatge)))==-1)
+  {
+     perror("Error en write");
+	 close(SckCon);
+	 exit(-1);
+  }	
 }
 
 /* Rep a través del socket TCP “connectat” d’identificador “SckCon” un    */

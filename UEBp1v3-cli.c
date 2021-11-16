@@ -48,7 +48,6 @@ int main(int argc,char *argv[])
 	scanf("%s",peticio);
     while(strcmp(peticio,"finalitzar") != 0){
       llegirDades(iprem,&portrem,nomFitxer);
-      /*
 	  int res = UEBc_ObteFitxer(iprem,portrem,nomFitxer,fitxer,&longFitxer);
 	  if(res == -1){
         perror("Error en interfície de sockets");
@@ -62,7 +61,7 @@ int main(int argc,char *argv[])
 	    perror("S'ha tancat la connexió per part del servidor");
 		exit(-1);
 	  }
-	  */ 
+	
 	  printf("Que vols fer? [obtenir][finalitzar]\n");
 	  scanf("%s",peticio); 
     }	
