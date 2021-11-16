@@ -57,13 +57,14 @@ int main(int argc,char *argv[])
     printf("S'ha iniciat servidor amb #Port: %d\n",portloc);
     //while(){
 	  int res = UEBs_ServeixPeticio(sesc);
+	  if(res == 1){
+		perror("Fitxer inexistent");
+	  }	
 	  if(res == -1){
-	    perror("Resposta erronia");
-	    exit(-1);
+	    perror("Fitxer demanat inexistent");
 	  }
 	  else if(res == -2){
 	    perror("Error en la interfície de sockets");
-	    exit(-1);
 	  }
 	  else if(res == -3){
 	    perror("Client ha tancat la connexio");
