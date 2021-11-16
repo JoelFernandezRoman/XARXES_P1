@@ -164,7 +164,7 @@ int TCP_AcceptaConnexio(int Sck, char *IPrem, int *portTCPrem)
 /* Retorna -1 si hi ha error; el nombre de bytes enviats si tot va bé.    */
 int TCP_Envia(int Sck, const char *SeqBytes, int LongSeqBytes)
 {
-	
+	return write(Sck,SeqBytes,LongSeqBytes);
 }
 
 /* Rep a través del socket TCP “connectat” d’identificador “Sck” una      */
@@ -179,7 +179,7 @@ int TCP_Envia(int Sck, const char *SeqBytes, int LongSeqBytes)
 /* de bytes rebuts si tot va bé.                                          */
 int TCP_Rep(int Sck, char *SeqBytes, int LongSeqBytes)
 {
-	
+    return read(Sck,SeqBytes,LongSeqBytes);	
 }
 
 /* S’allibera (s’esborra) el socket TCP d’identificador “Sck”; si “Sck”   */

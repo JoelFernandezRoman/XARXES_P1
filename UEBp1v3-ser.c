@@ -55,7 +55,7 @@ int main(int argc,char *argv[])
 	   exit(-1);
     }
     printf("S'ha iniciat servidor amb #Port: %d\n",portloc);
-    while(){
+    //while(){
 	  int res = UEBs_ServeixPeticio(sesc);
 	  if(res == -1){
 	    perror("Resposta erronia");
@@ -69,7 +69,7 @@ int main(int argc,char *argv[])
 	    perror("Client ha tancat la connexio");
 	    exit(-1);
 	  } 
-    }
+    /*}*/
 }
 
 /* Definició de funcions INTERNES, és a dir, d'aquelles que es faran      */

@@ -15,6 +15,9 @@
 /*   un #include del propi fitxer capçalera)                              */
 
 #include "UEBp1v3-tTCP.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* Definició de constants, p.e.,                                          */
 
@@ -66,7 +69,39 @@ int UEBs_IniciaServ(int *SckEsc, int portTCPser)
 /* -3 si l'altra part tanca la connexió.                                  */
 int UEBs_ServeixPeticio(int SckEsc)
 {
-
+	int scon;
+	char iprem[16];
+	int portrem;
+	char tipus[3+1];
+	int longitud;
+	char info[9992+1];
+    if((scon=TCP_AcceptaConnexio(SckEsc,iprem,&portrem))==-1)
+	{
+	  perror("Error en accept");
+	  close(SckEsc);
+	  exit(-1);
+    }
+    //Rep OBT per part del client
+    int res;
+    res = RepiDesconstMis(scon,tipus,info,&longitud);
+    if(res == -1){
+		perror("Error en la interfície de sockets");
+		exit(-1);
+	}
+	else if(res == -2){
+		perror("Protocol incorrecte");
+		exit(-1);
+	}
+	else if(res == -3){
+		perror("Client ha tancat la connexió");
+		exit(-1);
+	}
+	printf("Tipus: %s, Longitud: %d, Info: %s\n",tipus,longitud,info);		
+	
+	TCP_TancaSock(scon);
+	TCP_TancaSock(SckEsc);
+	
+	return 0;
 }
 
 /* Examina simultàniament i sense límit de temps (una espera indefinida)  */
@@ -152,6 +187,20 @@ int ConstiEnvMis(int SckCon, const char *tipus, const char *info1, int long1)
 /* -3 si l'altra part tanca la connexió.                                  */
 int RepiDesconstMis(int SckCon, char *tipus, char *info1, int *long1)
 {
-	
+	int bytes_llegits;
+	char missatge[9999];
+	char l[4];
+	if((bytes_llegits=TCP_Rep(SckCon,missatge,sizeof(missatge)))==-1)
+	{
+		 perror("Error en read");
+		 close(SckCon);
+		 exit(-1);
+	}
+	memcpy(tipus,missatge,3);
+	tipus[3] = '\0';
+    memcpy(l,missatge+3,4);
+	*(long1) = atoi(l);
+	memcpy(info1,missatge+7,*(long1));
+	info1[*(long1)] = '\0';
 }
 
