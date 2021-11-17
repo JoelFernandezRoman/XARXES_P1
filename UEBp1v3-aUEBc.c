@@ -65,15 +65,20 @@ int UEBc_ObteFitxer(const char *IPser, int portTCPser, const char *NomFitx, char
 	 int scon, bytes_escrits;
 	 if((scon=TCP_CreaSockClient("0.0.0.0",0))==-1)
 	 {
-	   perror("Error en socket");
-	   exit(-1);
+	    return -1;
 	 }
 	 if(TCP_DemanaConnexio(scon,IPser,portTCPser) == -1){
-		  perror("Error en connect");
-		  close(scon);
-		  exit(-1);
+		  return -1;
      }
      ConstiEnvMis(scon,"OBT",NomFitx,strlen(NomFitx));
+     char tipusRes[LONGTIPUS+1];
+     char infoRes[LONGMAXINFO1+1];
+     int longitudRes;
+     RepiDesconstMis(scon,tipusRes,infoRes,&longitudRes);
+     if(strcmp(tipusRes,"ERR") == 0){
+		 return 1;
+	 }	 
+     printf("Tipus: %s, Longitud: %d, Info: \n%s\n",tipusRes,longitudRes,infoRes);		
 	 return 0;
 }
 
@@ -143,20 +148,22 @@ char* UEBc_ObteMissError(void)
 /* -2 si protocol és incorrecte (tipus de petició, mal construït, etc.)   */
 int ConstiEnvMis(int SckCon, const char *tipus, const char *info1, int long1)
 {
+	
+  if(long1 < LONGMININFO1) return -2;	
   int bytes_escrits;	
-  char * missatge = malloc(7+long1+1);
+  char missatge[LONGMAXPUEB+1];
   memcpy(missatge,tipus,3);
-  char n[4];
+  
+  //conversió int a char de quatre digits
+  char n[LONGLONG1];
   sprintf(n, "%.4d", long1);
+  
   memcpy(missatge+3,n,4);
   memcpy(missatge+7,info1,long1);
-  missatge[7+long1] = '\0';
-  printf("%s\n",missatge);
+  missatge[7+long1] = '\0'; //per poder utilitzar strlen correctament
   if((bytes_escrits=TCP_Envia(SckCon,missatge,strlen(missatge)))==-1)
   {
-     perror("Error en write");
-	 close(SckCon);
-	 exit(-1);
+     return -1;
   }	
 }
 
@@ -176,7 +183,23 @@ int ConstiEnvMis(int SckCon, const char *tipus, const char *info1, int long1)
 /* -3 si l'altra part tanca la connexió.                                  */
 int RepiDesconstMis(int SckCon, char *tipus, char *info1, int *long1)
 {
-	
+	int bytes_llegits;
+	char missatge[LONGMAXPUEB];
+	char l[LONGLONG1];
+	if((bytes_llegits=TCP_Rep(SckCon,missatge,sizeof(missatge)))==-1)
+	{
+		 return -1;
+	}
+	if(bytes_llegits < LONGMINPUEB){
+		return -2;
+	}	
+	memcpy(tipus,missatge,3);
+	tipus[3] = '\0';
+    memcpy(l,missatge+3,4);
+	*(long1) = atoi(l);
+	memcpy(info1,missatge+7,*(long1));
+	info1[*(long1)] = '\0';
+	return 0;
 }
 
 

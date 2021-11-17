@@ -46,9 +46,12 @@ int main(int argc,char *argv[])
  /* Expressions, estructures de control, crides a funcions, etc.          */
     printf("Que vols fer? [obtenir][finalitzar]\n");
 	scanf("%s",peticio);
-    while(strcmp(peticio,"finalitzar") != 0){
+    //while(strcmp(peticio,"finalitzar") != 0){
       llegirDades(iprem,&portrem,nomFitxer);
 	  int res = UEBc_ObteFitxer(iprem,portrem,nomFitxer,fitxer,&longFitxer);
+	  if(res == 1){
+		perror("Fitxer inexistent");
+	  }	  
 	  if(res == -1){
         perror("Error en interfície de sockets");
 	    exit(-1);
@@ -61,10 +64,10 @@ int main(int argc,char *argv[])
 	    perror("S'ha tancat la connexió per part del servidor");
 		exit(-1);
 	  }
-	
+	/*
 	  printf("Que vols fer? [obtenir][finalitzar]\n");
 	  scanf("%s",peticio); 
-    }	
+    }*/	
     
 }
 
