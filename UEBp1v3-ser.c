@@ -7,8 +7,8 @@
 /* servidora de la capa UEB).                                             */
 
 /*                                                                        */
-/* Autors:                                                                */
-/* Data:                                                                  */
+/* Autors: Albert Sastre, Joel Fernandez                                  */
+/* Data: 18/11/2021                                                       */
 /*                                                                        */
 /**************************************************************************/
 
@@ -27,6 +27,7 @@
 /* fer-les conegudes des d'aquí fins al final d'aquest fitxer, p.e.,      */
 
 /* int FuncioInterna(arg1, arg2...);                                      */
+void mostrarResultat(int res, FILE *flog, struct dades client, struct dades servidor,char *nomFitxer);
 
 int main(int argc,char *argv[])
 {
@@ -40,55 +41,30 @@ int main(int argc,char *argv[])
     char nomFitxer[20];
 	struct dades client, servidor;
  /* Expressions, estructures de control, crides a funcions, etc.          */
+    //LECTURA FITXER DE CONFIGURACIO
     FILE * f = fopen("ser.cfg","r");
 	if(fopen == NULL){
 		perror("Fitxer de configuracio no trobat");
 		exit(-1);
 	}
     fscanf(f,"%s %d %s %s",buffer,&portloc,buffer,arrel);	
+    //INICIA SERVIDOR
 	if((UEBs_IniciaServ(&sesc,portloc)) == -1){
 	   perror("Error en inicia servidor");
-	   close(sesc);
 	   exit(-1);
     }
     fclose(f);
     FILE *flog = fopen("ser.log","a");
     printf("S'ha iniciat servidor amb #Port: %d\n",portloc);
     fprintf(flog,"S'ha iniciat servidor amb #Port: %d\n",portloc);
-    while(1){
-	  int res = UEBs_ServeixPeticio(sesc,arrel,&client,&servidor,nomFitxer);
-	  printf("-----------------------------------------------------------\n");
-      fprintf(flog,"-----------------------------------------------------------\n");
-	  printf("OBTENIR %s\n",nomFitxer);
-	  fprintf(flog,"OBTENIR %s\n",nomFitxer);
-	  if(res == -1){
-	     printf("Error en interfície de sockets\n");
-	     fprintf(flog,"Error en interfície de sockets\n");
-	  }
-	  else if(res == -2){
-	     printf("Error en protocol\n");
-	     fprintf(flog,"Error en protocol\n");
-	  }
-	  else if(res == -3){
-	    printf("Client ha tancat la connexio\n");
-	    fprintf(flog,"Client ha tancat la connexio\n");
-	  } 
-	  else {
-		printf("Socket remot : @IP: %s, #Port: %d \n",client.ip,client.port);
-        printf("Socket local : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);
-        fprintf(flog,"Socket remot : @IP: %s, #Port: %d \n",client.ip,client.port);
-        fprintf(flog,"Socket local : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);  
-		if(res == 0){  
-          printf("Fitxer servit correctament\n");		
-          fprintf(flog,"Fitxer servit correctament\n");	
-        }
-        else {
-		  printf("Fitxer inexistent\n");
-		  fprintf(flog,"Fitxer inexistent\n");
-		}
-      } 	  
-    }
     fclose(flog);
+    while(1){
+	  flog = fopen("ser.log","a");	
+	  //SERVEIX PETICIO
+	  int res = UEBs_ServeixPeticio(sesc,arrel,&client,&servidor,nomFitxer);
+	  mostrarResultat(res,flog,client,servidor,nomFitxer);
+      fclose(flog); 	  
+    }
 }
 
 /* Definició de funcions INTERNES, és a dir, d'aquelles que es faran      */
@@ -100,4 +76,39 @@ int main(int argc,char *argv[])
 {
 	
 } */
+
+void mostrarResultat(int res, FILE *flog, struct dades client, struct dades servidor, char *nomFitxer){
+	printf("-----------------------------------------------------------\n");
+    fprintf(flog,"-----------------------------------------------------------\n");
+	printf("OBTENIR %s\n",nomFitxer);
+	fprintf(flog,"OBTENIR %s\n",nomFitxer);
+	//MISSATGES D'ERRORS
+	if(res == -1){
+	  printf("Error en interfície de sockets\n");
+	  fprintf(flog,"Error en interfície de sockets\n");
+	}
+	else if(res == -2){
+	  printf("Error en protocol\n");
+	  fprintf(flog,"Error en protocol\n");
+	}
+	else if(res == -3){
+	  printf("Client ha tancat la connexio\n");
+	  fprintf(flog,"Client ha tancat la connexio\n");
+	} 
+	//MISSATGES CORRECTES
+	else {
+      printf("Socket remot : @IP: %s, #Port: %d \n",client.ip,client.port);
+      printf("Socket local : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);
+      fprintf(flog,"Socket remot : @IP: %s, #Port: %d \n",client.ip,client.port);
+      fprintf(flog,"Socket local : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);  
+      if(res == 0){  
+        printf("Fitxer servit correctament\n");		
+        fprintf(flog,"Fitxer servit correctament\n");	
+      }
+      else {
+		printf("Fitxer inexistent\n");
+		fprintf(flog,"Fitxer inexistent\n");
+      }
+    }
+}
 

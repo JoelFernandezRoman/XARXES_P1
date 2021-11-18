@@ -3,8 +3,8 @@
 /* P1 - UEB amb sockets TCP/IP - Part I                                   */
 /* Fitxer capçalera de aUEBs.c                                            */
 /*                                                                        */
-/* Autors:                                                                */
-/* Data:                                                                  */
+/* Autors: Albert Sastre, Joel Fernandez                                  */
+/* Data: 18/11/2021                                                       */
 /*                                                                        */
 /**************************************************************************/
 
@@ -20,7 +20,6 @@ struct dades {
   char ip[100];
   int port;
 };
-
  
 int UEBs_IniciaServ(int *SckEsc, int portTCPser);
 int UEBs_ServeixPeticio(int SckEsc, const char *arrel, struct dades *client, struct dades *servidor, char *nomFitxer);

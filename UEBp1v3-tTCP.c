@@ -6,8 +6,8 @@
 /* TCP, en unes altres funcions més simples i entenedores: la "nova"      */
 /* interfície de sockets TCP.                                             */
 /*                                                                        */
-/* Autors:                                                                */
-/* Data:                                                                  */
+/* Autors: Albert Sastre, Joel Fernandez                                  */
+/* Data: 18/11/2021                                                       */
 /*                                                                        */
 /**************************************************************************/
 
@@ -16,7 +16,6 @@
 /*   un #include del propi fitxer capçalera)                              */
 
 #include <string.h>
-
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>

@@ -3,8 +3,8 @@
 /* P1 - UEB amb sockets TCP/IP - Part I                                   */
 /* Fitxer capçalera de tTCP.c                                             */
 /*                                                                        */
-/* Autors:                                                                */
-/* Data:                                                                  */
+/* Autors: Albert Sastre, Joel Fernandez                                  */
+/* Data: 18/11/2021                                                       */
 /*                                                                        */
 /**************************************************************************/
 

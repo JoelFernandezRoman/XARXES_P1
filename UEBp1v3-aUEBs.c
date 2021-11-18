@@ -5,8 +5,8 @@
 /* cap de transport TCP (fent crides a la "nova" interfície de la         */
 /* capa TCP o "nova" interfície de sockets TCP), en la part servidora.    */
 /*                                                                        */
-/* Autors:                                                                */
-/* Data:                                                                  */
+/* Autors: Albert Sastre, Joel Fernandez                                  */
+/* Data: 18/11/2021                                                       */
 /*                                                                        */
 /**************************************************************************/
 
@@ -92,7 +92,6 @@ int UEBs_ServeixPeticio(int SckEsc,const char * arrel, struct dades * client, st
 	char dir[50];
 	strcpy(dir,arrel);
 	strcat(dir,nomFitxer);
-	printf("\n%s\n",dir);
     if((fdFitxer = open(dir,O_RDONLY)) == -1){
 	   ConstiEnvMis(scon,"ERR","error1",6);
 	   return 1;
@@ -103,9 +102,7 @@ int UEBs_ServeixPeticio(int SckEsc,const char * arrel, struct dades * client, st
 	close(fdFitxer);	
 	//Enviar fitxer
 	ConstiEnvMis(scon,"COR",bufferFitxer,bytesLlegitsFitxer);
-	
 	TCP_TancaSock(scon);
-	
 	return 0;
 }
 
@@ -189,6 +186,7 @@ int ConstiEnvMis(int SckCon, const char *tipus, const char *info1, int long1)
   {
      return -1;
   }	
+  return 0;
 }
 
 /* Rep a través del socket TCP “connectat” d’identificador “SckCon” un    */
