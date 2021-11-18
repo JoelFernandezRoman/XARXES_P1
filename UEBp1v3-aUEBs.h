@@ -23,7 +23,7 @@ struct dades {
 
  
 int UEBs_IniciaServ(int *SckEsc, int portTCPser);
-int UEBs_ServeixPeticio(int SckEsc, char *arrel, struct dades *client, struct dades *servidor, char *nomFitxer);
+int UEBs_ServeixPeticio(int SckEsc, const char *arrel, struct dades *client, struct dades *servidor, char *nomFitxer);
 int UEBs_HaArribatAlgunaCosa(const int *LlistaSck, int LongLlistaSck);
 char* UEBs_ObteMissError(void);
 /* int UEBs_FuncioExterna(arg1, arg2...);                                 */

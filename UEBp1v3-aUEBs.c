@@ -69,7 +69,7 @@ int UEBs_IniciaServ(int *SckEsc, int portTCPser)
 /* -1 si hi ha un error en la interfície de sockets,                      */
 /* -2 si protocol és incorrecte (tipus de petició, mal construït, etc.)   */
 /* -3 si l'altra part tanca la connexió.                                  */
-int UEBs_ServeixPeticio(int SckEsc, char * arrel, struct dades * client, struct dades* servidor, char *nomFitxer)
+int UEBs_ServeixPeticio(int SckEsc,const char * arrel, struct dades * client, struct dades* servidor, char *nomFitxer)
 {
 	int scon;
 	char iprem[16];
@@ -89,8 +89,11 @@ int UEBs_ServeixPeticio(int SckEsc, char * arrel, struct dades * client, struct 
 	  return res;
 	}
 	//Obre fitxer
-	strcat(arrel,nomFitxer);
-    if((fdFitxer = open(arrel,O_RDONLY)) == -1){
+	char dir[50];
+	strcpy(dir,arrel);
+	strcat(dir,nomFitxer);
+	printf("\n%s\n",dir);
+    if((fdFitxer = open(dir,O_RDONLY)) == -1){
 	   ConstiEnvMis(scon,"ERR","error1",6);
 	   return 1;
 	}

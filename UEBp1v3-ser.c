@@ -55,21 +55,13 @@ int main(int argc,char *argv[])
     FILE *flog = fopen("ser.log","a");
     printf("S'ha iniciat servidor amb #Port: %d\n",portloc);
     fprintf(flog,"S'ha iniciat servidor amb #Port: %d\n",portloc);
-    //*while(1){*/
+    while(1){
 	  int res = UEBs_ServeixPeticio(sesc,arrel,&client,&servidor,nomFitxer);
 	  printf("-----------------------------------------------------------\n");
       fprintf(flog,"-----------------------------------------------------------\n");
 	  printf("OBTENIR %s\n",nomFitxer);
 	  fprintf(flog,"OBTENIR %s\n",nomFitxer);
-	  printf("Socket remot : @IP: %s, #Port: %d \n",client.ip,client.port);
-      printf("Socket local : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);
-      fprintf(flog,"Socket remot : @IP: %s, #Port: %d \n",client.ip,client.port);
-      fprintf(flog,"Socket local : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);
-	  if(res == 1){
-		printf("Fitxer inexistent\n");
-		fprintf(flog,"Fitxer inexistent\n");
-	  }	
-	  else if(res == -1){
+	  if(res == -1){
 	     printf("Error en interfície de sockets\n");
 	     fprintf(flog,"Error en interfície de sockets\n");
 	  }
@@ -82,10 +74,20 @@ int main(int argc,char *argv[])
 	    fprintf(flog,"Client ha tancat la connexio\n");
 	  } 
 	  else {
-        printf("Fitxer servit correctament\n");		
-        fprintf(flog,"Fitxer servit correctament\n");	
+		printf("Socket remot : @IP: %s, #Port: %d \n",client.ip,client.port);
+        printf("Socket local : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);
+        fprintf(flog,"Socket remot : @IP: %s, #Port: %d \n",client.ip,client.port);
+        fprintf(flog,"Socket local : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);  
+		if(res == 0){  
+          printf("Fitxer servit correctament\n");		
+          fprintf(flog,"Fitxer servit correctament\n");	
+        }
+        else {
+		  printf("Fitxer inexistent\n");
+		  fprintf(flog,"Fitxer inexistent\n");
+		}
       } 	  
-    /*}*/
+    }
     fclose(flog);
 }
 
