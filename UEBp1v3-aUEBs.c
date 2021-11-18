@@ -15,6 +15,7 @@
 /*   un #include del propi fitxer capçalera)                              */
 
 #include "UEBp1v3-tTCP.h"
+#include "UEBp1v3-aUEBs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -68,38 +69,39 @@ int UEBs_IniciaServ(int *SckEsc, int portTCPser)
 /* -1 si hi ha un error en la interfície de sockets,                      */
 /* -2 si protocol és incorrecte (tipus de petició, mal construït, etc.)   */
 /* -3 si l'altra part tanca la connexió.                                  */
-int UEBs_ServeixPeticio(int SckEsc)
+int UEBs_ServeixPeticio(int SckEsc, char * arrel, struct dades * client, struct dades* servidor, char *nomFitxer)
 {
 	int scon;
 	char iprem[16];
 	int portrem;
 	char tipus[3+1];
 	int longitud;
-	char info[LONGMAXINFO1+1];
 	int fdFitxer;
     if((scon=TCP_AcceptaConnexio(SckEsc,iprem,&portrem))==-1)
 	{
 	 return -1;
     }
+    TCP_TrobaAdrSockLoc(scon,servidor->ip,&(servidor->port));
+    TCP_TrobaAdrSockRem(scon,client->ip,&(client->port));
     //Rep OBT per part del client
-    int res = RepiDesconstMis(scon,tipus,info,&longitud);
+    int res = RepiDesconstMis(scon,tipus,nomFitxer,&longitud);
     if(res == -1 || res == -2 || res == -3){
 	  return res;
 	}
 	//Obre fitxer
-    if((fdFitxer = open(info,O_RDONLY)) == -1){
+	strcat(arrel,nomFitxer);
+    if((fdFitxer = open(arrel,O_RDONLY)) == -1){
 	   ConstiEnvMis(scon,"ERR","error1",6);
 	   return 1;
 	}
 	//Llegeix fitxer
 	char bufferFitxer[LONGMAXINFO1];
 	int bytesLlegitsFitxer = read(fdFitxer,bufferFitxer,LONGMAXINFO1);
-		
+	close(fdFitxer);	
 	//Enviar fitxer
 	ConstiEnvMis(scon,"COR",bufferFitxer,bytesLlegitsFitxer);
 	
 	TCP_TancaSock(scon);
-	TCP_TancaSock(SckEsc);
 	
 	return 0;
 }
