@@ -6,8 +6,8 @@
 /* (la part client de) UEB (fent crides a la interfície de la part        */
 /* client de la capa UEB).                                                */
 /*                                                                        */
-/* Autors:                                                                */
-/* Data:                                                                  */
+/* Autors: Albert Sastre, Joel Fernandez                                  */
+/* Data: 18/11/2021                                                       */
 /*                                                                        */
 /**************************************************************************/
 
@@ -27,6 +27,7 @@
 
 /* int FuncioInterna(arg1, arg2...);                                      */
 void llegirDades(char *ipRem, int *portRem, char *nomFitxer);
+void mostrarResultat(int res, struct dades servidor, struct dades client, int longFitxer, char *fitxer, char *nomFitxer);
 
 int main(int argc,char *argv[])
 {
@@ -39,35 +40,15 @@ int main(int argc,char *argv[])
 	char peticio[20];
 	struct dades client, servidor;	
  /* Expressions, estructures de control, crides a funcions, etc.          */
-    printf("Que vols fer? [obtenir][finalitzar]\n");
+    printf("Que vols fer? [obtenir (nom fitxer)][finalitzar]\n");
 	scanf("%s",peticio);
     while(strcmp(peticio,"finalitzar") != 0){
       llegirDades(iprem,&portrem,nomFitxer);
-      printf("\nOBTENIR %s\n",nomFitxer);	
 	  int res = UEBc_ObteFitxer(iprem,portrem,nomFitxer,fitxer,&longFitxer,&client,&servidor);	  
-	  if(res == -1){
-        printf("Error en interfície de sockets\n");
-      }
-      else if(res == -2){
-        printf("Error en protocol\n");
-	    		 
-	  }
-	  else if(res == -3){
-	    printf("Servidor ha tancat la connexio\n");
-	  }
-	  else {
-		printf("Socket local : @IP: %s, #Port: %d \n",client.ip,client.port);
-        printf("Socket remot : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);  
-        if(res == 0)
-	      printf("Mida fitxer: %d\nFitxer resultant:\n%s\n",longFitxer,fitxer);
-	    else 
-	      printf("Fitxer inexistent\n"); 
-	  }  
-	  printf("-----------------------------------------------------------\n");
-	  printf("Que vols fer? [obtenir][finalitzar]\n");
+      mostrarResultat(res,servidor,client,longFitxer,fitxer,nomFitxer);
+	  printf("Que vols fer? [obtenir (nomFitxer)][finalitzar]\n");
 	  scanf("%s",peticio); 
     }
-    
 }
 
 /* Definició de funcions INTERNES, és a dir, d'aquelles que es faran      */
@@ -80,13 +61,34 @@ int main(int argc,char *argv[])
 	
 } */
 void llegirDades(char *ipRem, int *portRem, char *nomFitxer){
-	//Llegeix @IP del servidor
+	 //Llegeix nom del fitxer
+	 scanf("%s", nomFitxer);
+	 //Llegeix @IP del servidor
 	 printf("@IP (servidor): ");
 	 scanf("%s",ipRem);
 	 //Llegeix #Port del servidor
 	 printf("#Port (servidor): ");
 	 scanf("%d", portRem);
-	 //Llegeix nom del fitxer
-	 printf("Nom fitxer: ");
-	 scanf("%s", nomFitxer);
 }
+
+void mostrarResultat(int res, struct dades servidor, struct dades client, int longFitxer, char *fitxer, char *nomFitxer){
+	 printf("\nOBTENIR %s\n",nomFitxer);	
+     if(res == -1){
+       printf("Error en interfície de sockets\n");
+     }
+     else if(res == -2){
+       printf("Error en protocol\n");
+	 }
+	 else if(res == -3){
+	   printf("Servidor ha tancat la connexio\n");
+	 }
+	 else {
+	   printf("Socket local : @IP: %s, #Port: %d \n",client.ip,client.port);
+       printf("Socket remot : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);  
+       if(res == 0)
+	     printf("Fitxer resultant:\n%s\n",fitxer);
+	   else 
+	     printf("Fitxer inexistent\n"); 
+	 }
+	 printf("-----------------------------------------------------------\n");
+}  

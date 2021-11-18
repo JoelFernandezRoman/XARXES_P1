@@ -5,8 +5,8 @@
 /* cap de transport TCP (fent crides a la "nova" interfície de la         */
 /* capa TCP o "nova" interfície de sockets TCP), en la part client.       */
 /*                                                                        */
-/* Autors:                                                                */
-/* Data:                                                                  */
+/* Autors: Albert Sastre, Joel Fernandez                                  */
+/* Data: 18/11/2021                                                       */
 /*                                                                        */
 /**************************************************************************/
 
@@ -79,9 +79,7 @@ int UEBc_ObteFitxer(const char *IPser, int portTCPser, const char *NomFitx, char
      if(strcmp(tipusRes,"ERR") == 0){
 		 return 1;
 	 }	 
-	 
 	 TCP_TancaSock(scon);
-	 
 	 return 0;
 }
 
@@ -150,8 +148,7 @@ char* UEBc_ObteMissError(void)
 /* -1 si hi ha un error en la interfície de sockets,                      */
 /* -2 si protocol és incorrecte (tipus de petició, mal construït, etc.)   */
 int ConstiEnvMis(int SckCon, const char *tipus, const char *info1, int long1)
-{
-	
+{	
   if(long1 < LONGMININFO1) return -2;	
   int bytes_escrits;	
   char missatge[LONGMAXPUEB+1];
@@ -168,6 +165,7 @@ int ConstiEnvMis(int SckCon, const char *tipus, const char *info1, int long1)
   {
      return -1;
   }	
+  return 0;
 }
 
 /* Rep a través del socket TCP “connectat” d’identificador “SckCon” un    */

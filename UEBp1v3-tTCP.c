@@ -178,7 +178,7 @@ int TCP_Envia(int Sck, const char *SeqBytes, int LongSeqBytes)
 /* de bytes rebuts si tot va bé.                                          */
 int TCP_Rep(int Sck, char *SeqBytes, int LongSeqBytes)
 {
-    return read(Sck,SeqBytes,LongSeqBytes);	
+	return read(Sck,SeqBytes,LongSeqBytes);
 }
 
 /* S’allibera (s’esborra) el socket TCP d’identificador “Sck”; si “Sck”   */
