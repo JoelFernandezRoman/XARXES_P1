@@ -44,13 +44,8 @@ int main(int argc,char *argv[])
     while(strcmp(peticio,"finalitzar") != 0){
       llegirDades(iprem,&portrem,nomFitxer);
       printf("\nOBTENIR %s\n",nomFitxer);	
-	  int res = UEBc_ObteFitxer(iprem,portrem,nomFitxer,fitxer,&longFitxer,&client,&servidor);
-	  printf("Socket local : @IP: %s, #Port: %d \n",client.ip,client.port);
-      printf("Socket remot : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);
-	  if(res == 1){
-		printf("Fitxer inexistent\n");
-	  }	  
-	  else if(res == -1){
+	  int res = UEBc_ObteFitxer(iprem,portrem,nomFitxer,fitxer,&longFitxer,&client,&servidor);	  
+	  if(res == -1){
         printf("Error en interfície de sockets\n");
       }
       else if(res == -2){
@@ -61,7 +56,12 @@ int main(int argc,char *argv[])
 	    printf("Servidor ha tancat la connexio\n");
 	  }
 	  else {
-	    printf("Fitxer resultant:\n%s\n",fitxer);
+		printf("Socket local : @IP: %s, #Port: %d \n",client.ip,client.port);
+        printf("Socket remot : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);  
+        if(res == 0)
+	      printf("Mida fitxer: %d\nFitxer resultant:\n%s\n",longFitxer,fitxer);
+	    else 
+	      printf("Fitxer inexistent\n"); 
 	  }  
 	  printf("-----------------------------------------------------------\n");
 	  printf("Que vols fer? [obtenir][finalitzar]\n");
