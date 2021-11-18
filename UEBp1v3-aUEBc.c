@@ -15,6 +15,7 @@
 /*   un #include del propi fitxer capçalera)                              */
 
 #include "UEBp1v3-tTCP.h"
+#include "UEBp1v3-aUEBc.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -60,7 +61,7 @@ int RepiDesconstMis(int SckCon, char *tipus, char *info1, int *long1);
 /* -1 si hi ha un error en la interfície de sockets,                      */
 /* -2 si protocol és incorrecte (tipus de petició, mal construït, etc.)   */
 /* -3 si l'altra part tanca la connexió.                                  */
-int UEBc_ObteFitxer(const char *IPser, int portTCPser, const char *NomFitx, char *Resp, int *LongResp)
+int UEBc_ObteFitxer(const char *IPser, int portTCPser, const char *NomFitx, char *Resp, int *LongResp, struct dades *client, struct dades *servidor)
 {
 	 int scon, bytes_escrits;
 	 if((scon=TCP_CreaSockClient("0.0.0.0",0))==-1)
@@ -70,15 +71,17 @@ int UEBc_ObteFitxer(const char *IPser, int portTCPser, const char *NomFitx, char
 	 if(TCP_DemanaConnexio(scon,IPser,portTCPser) == -1){
 		  return -1;
      }
+     TCP_TrobaAdrSockLoc(scon,client->ip,&(client->port));
+     TCP_TrobaAdrSockRem(scon,servidor->ip,&(servidor->port));
      ConstiEnvMis(scon,"OBT",NomFitx,strlen(NomFitx));
      char tipusRes[LONGTIPUS+1];
-     char infoRes[LONGMAXINFO1+1];
-     int longitudRes;
-     RepiDesconstMis(scon,tipusRes,infoRes,&longitudRes);
+     RepiDesconstMis(scon,tipusRes,Resp,LongResp);
      if(strcmp(tipusRes,"ERR") == 0){
 		 return 1;
 	 }	 
-     printf("Tipus: %s, Longitud: %d, Info: \n%s\n",tipusRes,longitudRes,infoRes);		
+	 
+	 TCP_TancaSock(scon);
+	 
 	 return 0;
 }
 

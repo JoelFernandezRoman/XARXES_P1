@@ -34,40 +34,39 @@ int main(int argc,char *argv[])
 	char iprem[16];
 	char nomFitxer[200];
 	int portrem;
-	char fitxer[200];
+	char fitxer[9999];
 	int longFitxer;
 	char peticio[20];
-	struct dades {
-		char *ip;
-		int port;
-		char *nomFitxer;
-	};
 	struct dades client, servidor;	
  /* Expressions, estructures de control, crides a funcions, etc.          */
     printf("Que vols fer? [obtenir][finalitzar]\n");
 	scanf("%s",peticio);
-    //while(strcmp(peticio,"finalitzar") != 0){
+    while(strcmp(peticio,"finalitzar") != 0){
       llegirDades(iprem,&portrem,nomFitxer);
-	  int res = UEBc_ObteFitxer(iprem,portrem,nomFitxer,fitxer,&longFitxer);
+      printf("\nOBTENIR %s\n",nomFitxer);	
+	  int res = UEBc_ObteFitxer(iprem,portrem,nomFitxer,fitxer,&longFitxer,&client,&servidor);
+	  printf("Socket local : @IP: %s, #Port: %d \n",client.ip,client.port);
+      printf("Socket remot : @IP: %s, #Port: %d \n",servidor.ip,servidor.port);
 	  if(res == 1){
-		perror("Fitxer inexistent");
+		printf("Fitxer inexistent\n");
 	  }	  
-	  if(res == -1){
-        perror("Error en interfície de sockets");
-	    exit(-1);
+	  else if(res == -1){
+        printf("Error en interfície de sockets\n");
       }
       else if(res == -2){
-        perror("Error en protocol");
-	    exit(-1);		 
+        printf("Error en protocol\n");
+	    		 
 	  }
 	  else if(res == -3){
-	    perror("S'ha tancat la connexió per part del servidor");
-		exit(-1);
+	    printf("Servidor ha tancat la connexio\n");
 	  }
-	/*
+	  else {
+	    printf("Fitxer resultant:\n%s\n",fitxer);
+	  }  
+	  printf("-----------------------------------------------------------\n");
 	  printf("Que vols fer? [obtenir][finalitzar]\n");
 	  scanf("%s",peticio); 
-    }*/	
+    }
     
 }
 
