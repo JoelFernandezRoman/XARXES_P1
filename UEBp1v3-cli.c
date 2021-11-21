@@ -16,6 +16,7 @@
 #include "UEBp1v3-aUEBc.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 /* Definició de constants, p.e.,                                          */
 
@@ -40,13 +41,13 @@ int main(int argc,char *argv[])
 	char peticio[20];
 	struct dades client, servidor;	
  /* Expressions, estructures de control, crides a funcions, etc.          */
-    printf("Que vols fer? [obtenir (nom fitxer)][finalitzar]\n");
+    printf("Que vols fer? [obtenir (pueb://@IP:#Port/nomFitxer)][finalitzar]\n");
 	scanf("%s",peticio);
     while(strcmp(peticio,"finalitzar") != 0){
       llegirDades(iprem,&portrem,nomFitxer);
 	  int res = UEBc_ObteFitxer(iprem,portrem,nomFitxer,fitxer,&longFitxer,&client,&servidor);	  
       mostrarResultat(res,servidor,client,longFitxer,fitxer,nomFitxer);
-	  printf("Que vols fer? [obtenir (nomFitxer)][finalitzar]\n");
+	  printf("Que vols fer? [obtenir (pueb://@IP:#Port/nomFitxer)][finalitzar]\n");
 	  scanf("%s",peticio); 
     }
 }
@@ -61,14 +62,28 @@ int main(int argc,char *argv[])
 	
 } */
 void llegirDades(char *ipRem, int *portRem, char *nomFitxer){
-	 //Llegeix nom del fitxer
-	 scanf("%s", nomFitxer);
-	 //Llegeix @IP del servidor
-	 printf("@IP (servidor): ");
-	 scanf("%s",ipRem);
-	 //Llegeix #Port del servidor
-	 printf("#Port (servidor): ");
-	 scanf("%d", portRem);
+	 char enllac[100];
+     scanf("%s",enllac);
+     //Obtenir @IP
+     int longIP = 0;
+     while(enllac[longIP+7] != ':'){
+       longIP++;
+     }	 
+     memcpy(ipRem,enllac+7,longIP); //enllac+7 per saltar-nos el pueb://
+     ipRem[longIP] = '\0';
+     //Obtenir #Port
+     char portservidorS[10];
+     int longPort = 0;
+     while(enllac[7+longIP+1+longPort] != '/'){
+       longPort++;
+     }
+     memcpy(portservidorS,enllac+7+longIP+1,longPort); //el +1 final és per no llegir els : entre @IP i #Port
+     portservidorS[longPort] = '\0';
+     *(portRem) = atoi(portservidorS);
+     //Obtenir nom fitxer
+     int longNomFitxer = strlen(enllac)-(7+longIP+longPort+1);
+     memcpy(nomFitxer,enllac+7+longIP+longPort+1,longNomFitxer);
+     nomFitxer[longNomFitxer] = '\0';
 }
 
 void mostrarResultat(int res, struct dades servidor, struct dades client, int longFitxer, char *fitxer, char *nomFitxer){
