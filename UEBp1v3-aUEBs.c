@@ -94,6 +94,7 @@ int UEBs_ServeixPeticio(int SckEsc,const char * arrel, struct dades * client, st
 	strcat(dir,nomFitxer);
     if((fdFitxer = open(dir,O_RDONLY)) == -1){
 	   ConstiEnvMis(scon,"ERR","error1",6);
+	   TCP_TancaSock(scon);
 	   return 1;
 	}
 	//Llegeix fitxer

@@ -77,6 +77,7 @@ int UEBc_ObteFitxer(const char *IPser, int portTCPser, const char *NomFitx, char
      char tipusRes[LONGTIPUS+1];
      RepiDesconstMis(scon,tipusRes,Resp,LongResp);
      if(strcmp(tipusRes,"ERR") == 0){
+		 TCP_TancaSock(scon);
 		 return 1;
 	 }	 
 	 TCP_TancaSock(scon);
